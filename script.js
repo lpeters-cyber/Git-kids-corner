@@ -22,7 +22,7 @@ const products = [
     sourceUrl: "https://www.kidscornerkzn.com/product-page/misty-unicorn-plush",
     category: "Baby and Toddler",
     tag: "Available",
-    price: 350,
+    price: 450,
     image: "assets/misty-unicorn-plush-1.jpg",
     description: "Unicorn stuffed animal with a soft white body and bright purple mane and tail Features shimmering patterned fabric on hooves and horn. Weighted hooves for steady standing Durably constructed with top-quality plush and fill Surface washable, spot clean with a damp cloth Do not leave in crib unattended Product: 10",
     color: "#d6ebc4",
