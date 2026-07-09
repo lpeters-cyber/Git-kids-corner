@@ -14470,8 +14470,11 @@ const state = {
   category: "all",
   sort: "popular",
   maxPrice: 3000,
-  inStock: true
+  inStock: false,
+  visibleProducts: 48
 };
+
+const PRODUCTS_PER_PAGE = 48;
 
 const productGrid = document.querySelector("[data-product-grid]");
 const productCount = document.querySelector("[data-product-count]");
@@ -14495,6 +14498,7 @@ const productModalAdd = document.querySelector("[data-product-modal-add]");
 const productThumbs = document.querySelector("[data-product-thumbs]");
 const galleryPrev = document.querySelector("[data-gallery-prev]");
 const galleryNext = document.querySelector("[data-gallery-next]");
+const loadMoreButton = document.querySelector("[data-load-more]");
 let currentProduct = null;
 let currentImageIndex = 0;
 
@@ -14521,8 +14525,17 @@ function filteredProducts() {
   return list;
 }
 
+function productPageHref(product) {
+  return `products/${product.slug}/`;
+}
+
+function resetProductPaging() {
+  state.visibleProducts = PRODUCTS_PER_PAGE;
+}
+
 function renderProducts() {
   const list = filteredProducts();
+  const visibleList = list.slice(0, state.visibleProducts);
   productCount.textContent = list.length;
 
   if (!list.length) {
@@ -14535,10 +14548,10 @@ function renderProducts() {
     return;
   }
 
-  productGrid.innerHTML = list.map((product) => `
+  productGrid.innerHTML = visibleList.map((product) => `
     <article class="product-card" tabindex="0" role="button" aria-label="View details for ${product.name}" data-view-product="${product.name}">
       <div class="product-art" style="--product-bg: ${product.color}">
-        ${product.image ? `<img src="${product.image}" alt="${product.name}" loading="lazy">` : ""}
+        ${product.image ? `<img src="${product.image}" alt="${product.name} kids toy from Kids Corner KZN" loading="lazy">` : `<span class="product-image-fallback">${product.name}</span>`}
       </div>
       <div class="product-info">
         <div class="product-meta"><span>${product.category}</span><span>${product.rating} stars</span></div>
@@ -14547,11 +14560,17 @@ function renderProducts() {
         <div class="product-meta"><span>${product.tag}</span><span>${product.stock ? "In stock" : "Waitlist"}</span></div>
         <div class="product-footer">
           <strong>${formatMoney(product.price)}</strong>
+          <a class="product-link" href="${productPageHref(product)}" data-product-link>Details</a>
           <button type="button" data-add-cart="${product.name}" ${product.stock ? "" : "disabled"}>${product.stock ? "Add" : "Notify"}</button>
         </div>
       </div>
     </article>
   `).join("");
+
+  if (loadMoreButton) {
+    loadMoreButton.hidden = state.visibleProducts >= list.length;
+    loadMoreButton.textContent = `Load more toys (${Math.min(PRODUCTS_PER_PAGE, list.length - state.visibleProducts)} more)`;
+  }
 }
 
 function showToast(message) {
@@ -14668,6 +14687,8 @@ document.addEventListener("click", (event) => {
     return;
   }
 
+  if (event.target.closest("[data-product-link]")) return;
+
   const viewProduct = event.target.closest("[data-view-product]");
   if (viewProduct) openProductDetails(viewProduct.dataset.viewProduct);
 
@@ -14685,6 +14706,7 @@ document.addEventListener("click", (event) => {
   if (collectionTile) {
     state.category = collectionTile.dataset.collectionCategory;
     document.querySelector("[data-filter-category]").value = state.category;
+    resetProductPaging();
     renderProducts();
   }
 
@@ -14705,22 +14727,31 @@ document.addEventListener("keydown", (event) => {
 
 document.querySelector("[data-filter-category]").addEventListener("change", (event) => {
   state.category = event.target.value;
+  resetProductPaging();
   renderProducts();
 });
 
 document.querySelector("[data-sort]").addEventListener("change", (event) => {
   state.sort = event.target.value;
+  resetProductPaging();
   renderProducts();
 });
 
 document.querySelector("[data-price]").addEventListener("input", (event) => {
   state.maxPrice = Number(event.target.value);
   document.querySelector("[data-price-label]").textContent = formatMoney(state.maxPrice);
+  resetProductPaging();
   renderProducts();
 });
 
 document.querySelector("[data-in-stock]").addEventListener("change", (event) => {
   state.inStock = event.target.checked;
+  resetProductPaging();
+  renderProducts();
+});
+
+loadMoreButton?.addEventListener("click", () => {
+  state.visibleProducts += PRODUCTS_PER_PAGE;
   renderProducts();
 });
 

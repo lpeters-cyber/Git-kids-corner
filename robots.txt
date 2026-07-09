@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lpeters-cyber.github.io/Git-kids-corner/sitemap.xml

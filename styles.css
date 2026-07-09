@@ -474,6 +474,19 @@ p { color: var(--muted); line-height: 1.65; }
   height: 240px;
   object-fit: cover;
 }
+.product-image-fallback {
+  display: grid;
+  place-items: center;
+  width: min(72%, 220px);
+  min-height: 120px;
+  padding: 1rem;
+  border: 1px solid rgba(17, 22, 20, .12);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, .56);
+  color: var(--teal);
+  font-weight: 800;
+  text-align: center;
+}
 .product-info {
   padding: 1rem;
   display: grid;
@@ -502,8 +515,10 @@ p { color: var(--muted); line-height: 1.65; }
   align-items: center;
   justify-content: space-between;
   gap: .75rem;
+  flex-wrap: wrap;
 }
-.product-footer button {
+.product-footer button,
+.product-link {
   border: 0;
   border-radius: 999px;
   background: var(--ink);
@@ -511,6 +526,21 @@ p { color: var(--muted); line-height: 1.65; }
   padding: .72rem .95rem;
   font-weight: 740;
 }
+.product-link {
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--ink);
+}
+.product-footer button:disabled {
+  background: #c8c0b5;
+  cursor: not-allowed;
+}
+.load-more-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+.load-more-row [hidden] { display: none; }
 
 .product-story {
   display: grid;
@@ -952,6 +982,99 @@ details p { margin: .7rem 0 0; }
 }
 
 [hidden] { display: none !important; }
+.seo-page { background: var(--paper); }
+.seo-header,
+.seo-footer {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+.seo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+.seo-header nav,
+.seo-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.seo-header nav a,
+.seo-footer a,
+.seo-copy-block a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.seo-product,
+.seo-collection {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+}
+.seo-product-hero {
+  display: grid;
+  grid-template-columns: minmax(280px, .95fr) minmax(280px, 1.05fr);
+  gap: 2rem;
+  align-items: center;
+  padding: 2rem 0;
+}
+.seo-product-media {
+  display: grid;
+  place-items: center;
+  min-height: 420px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: white;
+  overflow: hidden;
+}
+.seo-product-media img {
+  width: 100%;
+  height: 100%;
+  max-height: 560px;
+  object-fit: contain;
+}
+.seo-product-copy {
+  display: grid;
+  gap: 1rem;
+}
+.seo-product-copy h1,
+.seo-collection-hero h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 7vw, 5rem);
+  line-height: .95;
+}
+.seo-price { font-size: 1.5rem; }
+.seo-gallery,
+.seo-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+.seo-gallery img,
+.seo-card img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius);
+  background: white;
+  border: 1px solid var(--line);
+}
+.seo-copy-block,
+.seo-collection-hero { max-width: 780px; }
+.seo-card {
+  display: grid;
+  gap: .65rem;
+  padding: .75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: white;
+}
+.seo-card strong { line-height: 1.2; }
+.seo-footer { border-top: 1px solid var(--line); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; scroll-behavior: auto !important; transition-duration: .001ms !important; }
 }
@@ -991,6 +1114,8 @@ details p { margin: .7rem 0 0; }
   .product-modal-media { min-height: 360px; }
   .filters { position: static; }
   .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .seo-product-hero { grid-template-columns: 1fr; }
+  .seo-gallery, .seo-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .journal, .site-footer { grid-template-columns: 1fr 1fr; }
   .contact-inner { grid-template-columns: 1fr; }
   .contact-heading h2 { max-width: 100%; }
@@ -1002,6 +1127,9 @@ details p { margin: .7rem 0 0; }
   .hero img { object-position: 62% center; }
   .hero-actions .button { width: 100%; }
   .trust-strip, .collection-grid, .product-grid, .journal, .site-footer, .search-grid { grid-template-columns: 1fr; }
+  .seo-header { align-items: flex-start; flex-direction: column; }
+  .seo-gallery, .seo-card-grid { grid-template-columns: 1fr; }
+  .seo-product-media { min-height: 280px; }
   .collection-tile { min-height: 210px; }
   .product-toolbar { align-items: stretch; flex-direction: column; }
   .gallery-main { min-height: 360px; }
