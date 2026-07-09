@@ -14468,6 +14468,7 @@ const products = [
 const state = {
   cart: [],
   category: "all",
+  ageGroup: "all",
   sort: "popular",
   maxPrice: 3000,
   inStock: false,
@@ -14510,12 +14511,35 @@ function formatMoney(value) {
   }).format(value);
 }
 
+function productAgeText(product) {
+  return `${product.name} ${product.category} ${product.tag} ${product.description}`.toLowerCase();
+}
+
+function matchesAgeGroup(product) {
+  if (state.ageGroup === "all") return true;
+  const text = productAgeText(product);
+  if (state.ageGroup === "baby") {
+    return /newborn|infant|baby|babies|6 months|12 months|0-12|tummy|rattle|soft stacker|play gym/.test(text);
+  }
+  if (state.ageGroup === "toddler") {
+    return /toddler|toddlers|18 months|1 year|2 years|ages 2|age 2|2\+|first play|stack|sort|pound|pull toy|chunky|fine motor/.test(text);
+  }
+  if (state.ageGroup === "preschool") {
+    return /preschool|pre-school|ages 3|age 3|3\+|3 to 5|3-5|ages 4|age 4|4\+|4 to 6|pretend|role play|dress-up|water wow|sticker|puzzle|craft|colors|colours/.test(text);
+  }
+  if (state.ageGroup === "school") {
+    return /school|school-age|school readiness|kindergarten|grade|ages 5|age 5|5\+|ages 6|age 6|6\+|7\+|alphabet|letters|reading|spelling|word|cvc|vowel|math|maths|memory|learning/.test(text);
+  }
+  return true;
+}
+
 function filteredProducts() {
   let list = products.filter((product) => {
     const categoryMatch = state.category === "all" || product.category === state.category;
+    const ageMatch = matchesAgeGroup(product);
     const priceMatch = product.price <= state.maxPrice;
     const stockMatch = !state.inStock || product.stock;
-    return categoryMatch && priceMatch && stockMatch;
+    return categoryMatch && ageMatch && priceMatch && stockMatch;
   });
 
   if (state.sort === "price-low") list = list.sort((a, b) => a.price - b.price);
@@ -14704,10 +14728,22 @@ document.addEventListener("click", (event) => {
 
   const collectionTile = event.target.closest("[data-collection-category]");
   if (collectionTile) {
+    state.ageGroup = "all";
     state.category = collectionTile.dataset.collectionCategory;
     document.querySelector("[data-filter-category]").value = state.category;
     resetProductPaging();
     renderProducts();
+  }
+
+  const ageTile = event.target.closest("[data-age-group]");
+  if (ageTile) {
+    event.preventDefault();
+    state.ageGroup = ageTile.dataset.ageGroup;
+    state.category = "all";
+    document.querySelector("[data-filter-category]").value = "all";
+    resetProductPaging();
+    renderProducts();
+    document.querySelector("#products").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   const thumb = event.target.closest("[data-gallery-thumb]");
@@ -14726,6 +14762,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 document.querySelector("[data-filter-category]").addEventListener("change", (event) => {
+  state.ageGroup = "all";
   state.category = event.target.value;
   resetProductPaging();
   renderProducts();

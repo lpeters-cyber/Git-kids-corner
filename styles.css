@@ -344,7 +344,7 @@ p { color: var(--muted); line-height: 1.65; }
 }
 .collection-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.1rem;
 }
 .collection-tile {
@@ -363,13 +363,13 @@ p { color: var(--muted); line-height: 1.65; }
   text-decoration: none;
 }
 .category-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 .category-grid .collection-tile {
-  min-height: 255px;
+  min-height: 270px;
 }
 .category-grid .collection-tile strong {
-  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  font-size: clamp(1.2rem, 2vw, 1.65rem);
 }
 .collection-tile:hover { transform: translateY(-4px); }
 .collection-tile img {
@@ -400,7 +400,7 @@ p { color: var(--muted); line-height: 1.65; }
   text-transform: uppercase;
 }
 .collection-content em {
-  max-width: 24ch;
+  max-width: 22ch;
   color: rgba(255, 255, 255, .88);
   font-style: normal;
   line-height: 1.35;
