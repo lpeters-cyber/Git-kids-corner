@@ -966,6 +966,25 @@ details p { margin: .7rem 0 0; }
 }
 .drawer-footer { border-top: 1px solid var(--line); border-bottom: 0; display: grid; gap: 1rem; }
 .drawer-footer div { display: flex; justify-content: space-between; }
+.invoice-form {
+  display: grid;
+  gap: .65rem;
+}
+.invoice-form input,
+.invoice-form textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: .8rem;
+  font: inherit;
+  resize: vertical;
+}
+.invoice-form p {
+  margin: 0;
+  color: var(--muted);
+  font-size: .86rem;
+  line-height: 1.35;
+}
 .cart-items { padding: 1rem; display: grid; align-content: start; gap: .75rem; }
 .cart-line {
   display: grid;

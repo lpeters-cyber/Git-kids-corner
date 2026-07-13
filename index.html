@@ -355,7 +355,14 @@
       </div>
       <div class="drawer-footer">
         <div><span>Estimated total</span><strong data-cart-total>R0</strong></div>
-        <button class="button primary" type="button" data-toast="Checkout flow preview">Secure checkout</button>
+        <form class="invoice-form" data-invoice-form>
+          <input name="name" type="text" placeholder="Your name" autocomplete="name" required>
+          <input name="email" type="email" placeholder="Your email" autocomplete="email" required>
+          <input name="phone" type="tel" placeholder="Phone number" autocomplete="tel">
+          <textarea name="address" placeholder="Delivery address or collection note" rows="3"></textarea>
+          <button class="button primary" type="submit">Email invoice request</button>
+          <p>The order request opens in your email app and is sent to Kids Corner KZN for invoicing.</p>
+        </form>
       </div>
     </div>
   </aside>

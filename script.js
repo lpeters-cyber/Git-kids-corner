@@ -14623,6 +14623,65 @@ function updateCart() {
   `).join("");
 }
 
+function cartSummaryLines() {
+  const grouped = new Map();
+  state.cart.forEach((item) => {
+    const key = item.slug || item.name;
+    const existing = grouped.get(key) || { item, quantity: 0 };
+    existing.quantity += 1;
+    grouped.set(key, existing);
+  });
+
+  return [...grouped.values()].map(({ item, quantity }, index) => {
+    const lineTotal = item.price * quantity;
+    const productUrl = item.sourceUrl || `${window.location.origin}${window.location.pathname.replace(/index\.html$/, "")}${productPageHref(item)}`;
+    return [
+      `${index + 1}. ${item.name}`,
+      `   Qty: ${quantity}`,
+      `   Unit price: ${formatMoney(item.price)}`,
+      `   Line total: ${formatMoney(lineTotal)}`,
+      item.sku ? `   Product number: ${item.sku}` : "",
+      `   Product link: ${productUrl}`,
+    ].filter(Boolean).join("\n");
+  });
+}
+
+function sendInvoiceRequest(form) {
+  if (!state.cart.length) {
+    showToast("Add products to the cart before requesting an invoice.");
+    return;
+  }
+
+  const formData = new FormData(form);
+  const total = state.cart.reduce((sum, item) => sum + item.price, 0);
+  const orderNumber = `KC-${Date.now().toString().slice(-8)}`;
+  const customerName = formData.get("name") || "";
+  const subject = `Invoice request ${orderNumber} - ${customerName || "Kids Corner customer"}`;
+  const body = [
+    "Hi Kids Corner KZN,",
+    "",
+    "Please send an invoice for this website order request.",
+    "",
+    `Order reference: ${orderNumber}`,
+    "",
+    "Customer details",
+    `Name: ${customerName}`,
+    `Email: ${formData.get("email") || ""}`,
+    `Phone: ${formData.get("phone") || ""}`,
+    `Delivery / collection note: ${formData.get("address") || ""}`,
+    "",
+    "Products",
+    cartSummaryLines().join("\n\n"),
+    "",
+    `Estimated total: ${formatMoney(total)}`,
+    "",
+    "Please confirm availability, delivery/collection details, and payment instructions."
+  ].join("\n");
+
+  window.location.href = `mailto:kidscornerkzn@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  showToast("Opening an invoice email for Kids Corner KZN.");
+}
+
 function addToCart(name) {
   const item = products.find((product) => product.name === name);
   if (!item) {
@@ -14847,6 +14906,11 @@ document.addEventListener("keydown", (event) => {
 document.querySelector(".newsletter").addEventListener("submit", (event) => {
   event.preventDefault();
   showToast("Thanks. Early access is switched on.");
+});
+
+document.querySelector("[data-invoice-form]").addEventListener("submit", (event) => {
+  event.preventDefault();
+  sendInvoiceRequest(event.currentTarget);
 });
 
 document.querySelector("[data-contact-form]").addEventListener("submit", (event) => {
