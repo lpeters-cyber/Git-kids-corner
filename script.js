@@ -14503,6 +14503,31 @@ const loadMoreButton = document.querySelector("[data-load-more]");
 let currentProduct = null;
 let currentImageIndex = 0;
 
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const revealObserver = "IntersectionObserver" in window && !prefersReducedMotion.matches
+  ? new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        revealObserver.unobserve(entry.target);
+      });
+    }, { rootMargin: "0px 0px -10% 0px", threshold: 0.12 })
+  : null;
+
+function prepareReveal(elements) {
+  elements.forEach((element, index) => {
+    if (!element || element.dataset.revealReady) return;
+    element.dataset.revealReady = "true";
+    element.classList.add("reveal-on-scroll");
+    element.style.setProperty("--reveal-delay", `${Math.min(index, 8) * 45}ms`);
+    if (revealObserver) {
+      revealObserver.observe(element);
+    } else {
+      element.classList.add("is-visible");
+    }
+  });
+}
+
 function formatMoney(value) {
   return new Intl.NumberFormat("en-ZA", {
     style: "currency",
@@ -14575,7 +14600,7 @@ function renderProducts() {
   productGrid.innerHTML = visibleList.map((product) => `
     <article class="product-card" tabindex="0" role="button" aria-label="View details for ${product.name}" data-view-product="${product.name}">
       <div class="product-art" style="--product-bg: ${product.color}">
-        ${product.image ? `<img src="${product.image}" alt="${product.name} kids toy from Kids Corner KZN" loading="lazy">` : `<span class="product-image-fallback">${product.name}</span>`}
+        ${product.image ? `<img src="${product.image}" alt="${product.name} kids toy from Kids Corner KZN" loading="lazy" decoding="async">` : `<span class="product-image-fallback">${product.name}</span>`}
       </div>
       <div class="product-info">
         <div class="product-meta"><span>${product.category}</span><span>${product.rating} stars</span></div>
@@ -14595,6 +14620,8 @@ function renderProducts() {
     loadMoreButton.hidden = state.visibleProducts >= list.length;
     loadMoreButton.textContent = `Load more toys (${Math.min(PRODUCTS_PER_PAGE, list.length - state.visibleProducts)} more)`;
   }
+
+  prepareReveal(productGrid.querySelectorAll(".product-card"));
 }
 
 function showToast(message) {
@@ -14931,6 +14958,19 @@ document.querySelector("[data-contact-form]").addEventListener("submit", (event)
   showToast("Opening your email app for Kids Corner.");
 });
 
+prepareReveal(document.querySelectorAll(`
+  .trust-strip > div,
+  .section-heading,
+  .collection-tile,
+  .journal article,
+  .story-visual,
+  .story-copy,
+  .video-frame,
+  .melissa-copy,
+  .stockists-section img,
+  .contact-inner,
+  .contact-card
+`));
 renderProducts();
 renderSearch();
 updateCart();

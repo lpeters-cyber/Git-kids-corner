@@ -12,6 +12,9 @@
   --cream: #fffaf0;
   --shadow: 0 24px 70px rgba(32, 35, 28, .12);
   --radius: 8px;
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  --fast: 180ms;
+  --slow: 560ms;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -21,6 +24,7 @@ body {
   margin: 0;
   color: var(--ink);
   background: var(--paper);
+  animation: page-ready 420ms var(--ease-out) both;
 }
 body.drawer-open { overflow: hidden; }
 a { color: inherit; text-decoration: none; }
@@ -339,6 +343,15 @@ p { color: var(--muted); line-height: 1.65; }
   margin: 0 auto;
   padding: clamp(3.5rem, 8vw, 7rem) 1rem;
 }
+.section,
+.who-we-are,
+.melissa-doug-section,
+.stockists-section,
+.contact-section,
+.site-footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 720px;
+}
 .section-heading {
   max-width: 680px;
   margin-bottom: 2rem;
@@ -360,7 +373,7 @@ p { color: var(--muted); line-height: 1.65; }
   overflow: hidden;
   background: #3f4636;
   box-shadow: 0 16px 40px rgba(32, 35, 28, .12);
-  transition: transform .22s ease;
+  transition: transform var(--fast) var(--ease-out), box-shadow var(--fast) var(--ease-out);
   text-decoration: none;
 }
 .category-grid {
@@ -380,7 +393,7 @@ p { color: var(--muted); line-height: 1.65; }
   height: 100%;
   object-fit: cover;
   transform: scale(1.02);
-  transition: transform .35s ease;
+  transition: transform var(--slow) var(--ease-out);
 }
 .collection-tile::after {
   content: "";
@@ -486,7 +499,8 @@ p { color: var(--muted); line-height: 1.65; }
   border: 1px solid var(--line);
   border-radius: var(--radius);
   overflow: hidden;
-  transition: transform .22s ease, box-shadow .22s ease;
+  transition: transform var(--fast) var(--ease-out), box-shadow var(--fast) var(--ease-out);
+  will-change: transform;
 }
 .product-card:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(17, 22, 20, .11); }
 .product-art {
@@ -508,7 +522,9 @@ p { color: var(--muted); line-height: 1.65; }
   width: 100%;
   height: 240px;
   object-fit: cover;
+  transition: transform var(--slow) var(--ease-out);
 }
+.product-card:hover .product-art img { transform: scale(1.045); }
 .product-image-fallback {
   display: grid;
   place-items: center;
@@ -560,6 +576,12 @@ p { color: var(--muted); line-height: 1.65; }
   color: white;
   padding: .72rem .95rem;
   font-weight: 740;
+  transition: transform var(--fast) var(--ease-out), box-shadow var(--fast) var(--ease-out), background-color var(--fast) ease;
+}
+.product-footer button:hover,
+.product-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(17, 22, 20, .12);
 }
 .product-link {
   border: 1px solid var(--line);
@@ -569,6 +591,8 @@ p { color: var(--muted); line-height: 1.65; }
 .product-footer button:disabled {
   background: var(--sage);
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 .load-more-row {
   display: flex;
@@ -1129,8 +1153,35 @@ details p { margin: .7rem 0 0; }
 }
 .seo-card strong { line-height: 1.2; }
 .seo-footer { border-top: 1px solid var(--line); }
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity var(--slow) var(--ease-out) var(--reveal-delay, 0ms),
+    transform var(--slow) var(--ease-out) var(--reveal-delay, 0ms);
+}
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes page-ready {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .001ms !important; scroll-behavior: auto !important; transition-duration: .001ms !important; }
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .001ms !important;
+  }
+  .reveal-on-scroll {
+    opacity: 1;
+    transform: none;
+  }
 }
 @media (max-width: 980px) {
   .nav-shell {
